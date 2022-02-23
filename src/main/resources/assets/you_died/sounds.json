@@ -1,0 +1,7 @@
+{
+    "death": {
+        "sounds": [
+            "you_died:death"
+        ]
+    }
+}
