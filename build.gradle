@@ -113,7 +113,7 @@ javadoc {
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "you_died",
+                "Specification-Title"     : "YouDied",
                 "Specification-Vendor"    : "Gory_Moon",
                 "Specification-Version"   : "1", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
