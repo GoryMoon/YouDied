@@ -1,12 +1,11 @@
 package se.gory_moon.you_died.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Widget;
-import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.screens.DeathScreen;
-import net.minecraft.network.chat.Style;
-import net.minecraft.util.Mth;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.gui.IGuiEventListener;
+import net.minecraft.client.gui.screen.DeathScreen;
+import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.Style;
 
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
@@ -33,12 +32,13 @@ public class DeathScreenWrapper extends DeathScreen {
         this.alpha = alpha;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
-    public void render(PoseStack stack, int pMouseX, int pMouseY, float pPartialTick) {
-        int alphaColor = Mth.ceil(this.alpha * 255.0F) << 24;
+    public void render(MatrixStack stack, int pMouseX, int pMouseY, float pPartialTick) {
+        int alphaColor = MathHelper.ceil(this.alpha * 255.0F) << 24;
+        int alphaGradientStart = MathHelper.floor(MathHelper.lerp(this.alpha, 0F, 0x60)) << 24;
+        int alphaGradientEnd = MathHelper.floor(MathHelper.lerp(this.alpha, 0F, 0xa0)) << 24;
 
-        this.fillGradient(stack, 0, 0, this.width, this.height, 1615855616, -1602211792);
+        this.fillGradient(stack, 0, 0, this.width, this.height, 0x00500000 | alphaGradientStart, 0x00803030 | alphaGradientEnd);
         stack.pushPose();
         stack.scale(2.0F, 2.0F, 2.0F);
         drawCenteredString(stack, this.font, deathScreen.getTitle(), this.width / 2 / 2, 30, 16777215 | alphaColor);
@@ -53,21 +53,14 @@ public class DeathScreenWrapper extends DeathScreen {
             this.renderComponentHoverEffect(stack, style, pMouseX, pMouseY);
         }
 
-        for (GuiEventListener guieventlistener : deathScreen.children()) {
-            if (guieventlistener instanceof AbstractWidget) {
-                ((AbstractWidget) guieventlistener).setAlpha(alpha);
+        for (IGuiEventListener eventListener : deathScreen.children()) {
+            if (eventListener instanceof Widget) {
+                ((Widget) eventListener).setAlpha(alpha);
             }
         }
-        for(Widget widget : deathScreen.renderables) {
+        for (Widget widget : deathScreen.buttons) {
             widget.render(stack, pMouseX, pMouseY, pPartialTick);
         }
-    }
-
-    @Override
-    public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
-        if (condition.getAsBoolean())
-            return deathScreen.mouseClicked(pMouseX, pMouseY, pButton);
-        return false;
     }
 
     @Override
@@ -80,6 +73,13 @@ public class DeathScreenWrapper extends DeathScreen {
     public void removed() {
         if (condition.getAsBoolean())
             deathScreen.removed();
+    }
+
+    @Override
+    public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
+        if (condition.getAsBoolean())
+            return deathScreen.mouseClicked(pMouseX, pMouseY, pButton);
+        return false;
     }
 
     @Override
@@ -111,24 +111,6 @@ public class DeathScreenWrapper extends DeathScreen {
     }
 
     @Override
-    public void afterMouseMove() {
-        if (condition.getAsBoolean())
-            deathScreen.afterMouseMove();
-    }
-
-    @Override
-    public void afterMouseAction() {
-        if (condition.getAsBoolean())
-            deathScreen.afterMouseAction();
-    }
-
-    @Override
-    public void afterKeyboardAction() {
-        if (condition.getAsBoolean())
-            deathScreen.afterKeyboardAction();
-    }
-
-    @Override
     public boolean keyReleased(int pKeyCode, int pScanCode, int pModifiers) {
         if (condition.getAsBoolean())
             return deathScreen.keyReleased(pKeyCode, pScanCode, pModifiers);
@@ -142,7 +124,7 @@ public class DeathScreenWrapper extends DeathScreen {
     }
 
     @Override
-    public Optional<GuiEventListener> getChildAt(double pMouseX, double pMouseY) {
+    public Optional<IGuiEventListener> getChildAt(double pMouseX, double pMouseY) {
         if (condition.getAsBoolean())
             return deathScreen.getChildAt(pMouseX, pMouseY);
         return super.getChildAt(pMouseX, pMouseY);
