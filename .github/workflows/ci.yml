@@ -3,7 +3,7 @@ name: Mod CI
 on:
   push:
     branches:
-      - main
+      - 1.18.+
 
 jobs:
   build:
