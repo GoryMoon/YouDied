@@ -6,16 +6,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.Util;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.screens.DeathScreen;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import se.gory_moon.you_died.YouDied;
-
-import java.util.Optional;
 
 public class DeathSplashScreen extends DeathScreenWrapper {
     private static final ResourceLocation TIMES_FONT = new ResourceLocation(YouDied.MOD_ID, "times");
@@ -31,7 +26,7 @@ public class DeathSplashScreen extends DeathScreenWrapper {
     public DeathSplashScreen(DeathScreenWrapper deathScreen) {
         super(deathScreen);
         this.deathScreen = deathScreen;
-        this.deathTitle = new TranslatableComponent("you_died.death").setStyle(ROOT_STYLE);
+        this.deathTitle = Component.translatable("you_died.death").setStyle(ROOT_STYLE);
         this.condition = () -> showingMenu;
     }
 
@@ -89,20 +84,20 @@ public class DeathSplashScreen extends DeathScreenWrapper {
             fill(stack, 0, (int) centerY - 25, this.width, (int) centerY + 25, 0xea000000);
             this.fillGradient(stack, 0, (int) centerY + 25, this.width, (int) centerY + 45, 0xea000000, 0x00000000);
 
-            float x = (this.width / 2f) - (font.width(this.deathTitle) * 1.3F) - 15F * zoomIn;
-            float y = (this.height / 2f) - 24;
-
-            stack.pushPose();
-            stack.translate(x, y, 0);
+            float w = font.getSplitter().stringWidth(deathTitle.getVisualOrderText()) - 1;
+            float x = (this.width / 2f) - (w / 2f);
+            float y = (this.height / 2f) + 2;
 
             float scaleZoom = Mth.lerp(zoomIn, 0F, 0.4F);
             float scale = 2.6F + scaleZoom;
-            stack.scale(scale, scale, scale);
 
+            stack.pushPose();
+            stack.translate(x + (w / 2f), y, 0);
+            stack.scale(scale, scale, scale);
 
             int l = Mth.ceil(fadeInText * 255.0F) << 24;
             if ((l & 0xfc000000) != 0) {
-                font.draw(stack, deathTitle, 0, 0, 0x008a0001 | l);
+                font.draw(stack, deathTitle, -(w/2f), -font.lineHeight, 0x008a0001 | l);
             }
             stack.popPose();
         } else {
