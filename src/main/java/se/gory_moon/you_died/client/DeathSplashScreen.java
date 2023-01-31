@@ -86,20 +86,20 @@ public class DeathSplashScreen extends DeathScreenWrapper {
             fill(stack, 0, (int) centerY - 25, this.width, (int) centerY + 25, alpha);
             this.fillGradient(stack, 0, (int) centerY + 25, this.width, (int) centerY + 45, alpha, 0x00000000);
 
-            float x = (this.width / 2f) - (font.width(this.deathTitle) * 1.3F) - 15F * zoomIn;
-            float y = (this.height / 2f) - 24;
-
-            stack.pushPose();
-            stack.translate(x, y, 0);
+            float w = font.getSplitter().stringWidth(deathTitle.getVisualOrderText()) - 1;
+            float x = (this.width / 2f) - (w / 2f);
+            float y = (this.height / 2f) + 2;
 
             float scaleZoom = MathHelper.lerp(zoomIn, 0F, 0.4F);
             float scale = 2.6F + scaleZoom;
-            stack.scale(scale, scale, scale);
 
+            stack.pushPose();
+            stack.translate(x + (w / 2f), y, 0);
+            stack.scale(scale, scale, scale);
 
             int l = MathHelper.ceil(fadeInText * 255.0F) << 24;
             if ((l & 0xfc000000) != 0) {
-                font.draw(stack, deathTitle, 0, 0, 0x008a0001 | l);
+                font.draw(stack, deathTitle, -(w/2f), -font.lineHeight, 0x008a0001 | l);
             }
             stack.popPose();
         } else {
