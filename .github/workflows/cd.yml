@@ -31,9 +31,9 @@ jobs:
         with:
           name: artifacts
           path: |
-            forge/build/jars
-            fabric/build/jars
-            quilt/build/jars
+            forge/build/jars/*.jar
+            fabric/build/jars/*.jar
+            quilt/build/jars/*.jar
   release:
     needs: [build]
     runs-on: ubuntu-latest
