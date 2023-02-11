@@ -29,6 +29,12 @@ allprojects {
     version = rootProject.mod_version
     group = rootProject.maven_group
 
+    //adds the build number to the end of the version string if on a build server
+    if (System.getenv().GITHUB_RUN_NUMBER  != null) {
+        version += ".${System.getenv().GITHUB_RUN_NUMBER}"
+    }
+    println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+
     tasks.withType(JavaCompile).configureEach {
         options.encoding = "UTF-8"
         options.release = 17
