@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "${group}",
+    "id": "you_died",
+    "version": "${version}",
+    "name": "You Died",
+    "description": "A mod that adds a Dark Souls inspired death screen",
+    "authors": ["Gory_Moon"],
+    "contact": {
+      "sources": "https://github.com/GoryMoon/YouDied",
+      "issues": "https://github.com/GoryMoon/YouDied/issues"
+    },
+    "license": "Insert License Here",
+    "icon": "logo.png",
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "environment": "client",
+    "entrypoints": {
+      "client_init": "se.gory_moon.you_died.quilt.YouDiedQuilt"
+    },
+    "depends": [
+      {
+        "id": "quilt_loader",
+        "version": "*"
+      },
+      {
+        "id": "quilt_base",
+        "version": "*"
+      },
+      {
+        "id": "minecraft",
+        "version": ">=1.19.2"
+      },
+      {
+        "id": "architectury",
+        "version": ">=6.2.43"
+      }
+    ]
+  }
+}
