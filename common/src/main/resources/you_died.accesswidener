@@ -1,0 +1,6 @@
+accessWidener   v2  named
+accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/List;
+accessible field net/minecraft/client/gui/screens/DeathScreen causeOfDeath Lnet/minecraft/network/chat/Component;
+accessible field net/minecraft/client/gui/screens/DeathScreen hardcore Z
+accessible field net/minecraft/client/gui/screens/DeathScreen deathScore Lnet/minecraft/network/chat/Component;
+accessible method net/minecraft/client/gui/screens/DeathScreen getClickedComponentStyleAt (I)Lnet/minecraft/network/chat/Style;

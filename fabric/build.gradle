@@ -1,0 +1,99 @@
+plugins {
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+architectury {
+    platformSetupLoomIde()
+    fabric()
+}
+
+loom {
+    accessWidenerPath = project(":common").loom.accessWidenerPath
+}
+
+configurations {
+    common
+    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
+}
+
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    // Remove the next line if you don't want to depend on the API
+    modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
+
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
+    common(project(path: ":fabric-like", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":fabric-like", configuration: "transformProductionFabric")) { transitive false }
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+shadowJar {
+    exclude "architectury.common.json"
+
+    configurations = [project.configurations.shadowCommon]
+    classifier "fabric-dev-shadow"
+}
+
+remapJar {
+    injectAccessWidener = true
+    inputFile.set shadowJar.archiveFile
+    dependsOn shadowJar
+    classifier "fabric"
+}
+
+sourcesJar {
+    def commonSources = project(":common").sourcesJar
+    dependsOn commonSources
+    from commonSources.archiveFile.map { zipTree(it) }
+    classifier "fabric-sources"
+}
+
+
+task signJar(dependsOn: remapJar, group: 'build') {
+    dependsOn remapJar
+    onlyIf {
+        project.hasProperty('keyStore')
+    }
+
+    doLast {
+        if (project.hasProperty('keyStore')) {
+            new File("$buildDir/libs").mkdirs()
+            project.logger.info("Signing jar ${remapJar.archiveFileName.get()}");
+
+            def keyStore = project.findProperty('keyStore')
+            def alias = project.findProperty('keyStoreAlias')
+            def storePass = project.findProperty('keyStorePass')
+            def keyPass = project.findProperty('keyStorePass')
+            def inputFile = remapJar.archiveFile.get()
+
+            def output = new File("$buildDir/jars")
+            output.mkdirs()
+            ant.signjar(
+                    destDir: "${output.absolutePath}",
+                    jar: inputFile,
+                    alias: alias,
+                    storetype: "jks",
+                    keyStore: keyStore,
+                    keypass: keyPass,
+                    storepass: storePass,
+                    verbose: true,
+                    preservelastmodified: "true")
+        } else {
+            project.logger.log(LogLevel.WARN, "Could not sign ${remapJar.archiveFileName.get()}. No keyStore property could be found")
+        }
+    }
+}
+
+build.dependsOn signJar
