@@ -31,9 +31,9 @@ jobs:
         with:
           name: artifacts
           path: |
-            forge/build/jars/*.jar
-            fabric/build/jars/*.jar
-            quilt/build/jars/*.jar
+            forge/build/jars/
+            fabric/build/jars/
+            quilt/build/jars/
   release:
     needs: [build]
     runs-on: ubuntu-latest
@@ -49,7 +49,7 @@ jobs:
         id: create_release
         uses: ncipollo/release-action@v1.12.0
         with:
-          artifacts: "./libs/*.jar"
+          artifacts: "./libs/**/*.jar"
           token: ${{ secrets.GITHUB_TOKEN }}
           name: Release ${{ github.ref_name }}
           generateReleaseNotes: true
