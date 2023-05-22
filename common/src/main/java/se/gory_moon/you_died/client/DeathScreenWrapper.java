@@ -2,7 +2,7 @@ package se.gory_moon.you_died.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.DeathScreen;
 import net.minecraft.network.chat.Style;
@@ -58,8 +58,8 @@ public class DeathScreenWrapper extends DeathScreen {
                 ((AbstractWidget) guieventlistener).setAlpha(alpha);
             }
         }
-        for(Widget widget : deathScreen.renderables) {
-            widget.render(stack, pMouseX, pMouseY, pPartialTick);
+        for(Renderable renderable : deathScreen.renderables) {
+            renderable.render(stack, pMouseX, pMouseY, pPartialTick);
         }
     }
 
