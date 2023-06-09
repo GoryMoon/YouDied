@@ -1,5 +1,5 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
 repositories {
@@ -56,14 +56,14 @@ shadowJar {
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
-    classifier "quilt-dev-shadow"
+    archiveClassifier.set("quilt-dev-shadow")
 }
 
 remapJar {
     injectAccessWidener = true
     inputFile.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier "quilt"
+    archiveClassifier.set("quilt")
 }
 
 sourcesJar {
@@ -73,7 +73,7 @@ sourcesJar {
 }
 
 
-task signJar(dependsOn: remapJar, group: 'build') {
+tasks.register('signJar') {
     dependsOn remapJar
     onlyIf {
         project.hasProperty('keyStore')
