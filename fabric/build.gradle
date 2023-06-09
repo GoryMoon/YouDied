@@ -1,5 +1,5 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
 architectury {
@@ -43,25 +43,25 @@ shadowJar {
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
-    classifier "fabric-dev-shadow"
+    archiveClassifier.set("fabric-dev-shadow")
 }
 
 remapJar {
     injectAccessWidener = true
     inputFile.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier "fabric"
+    archiveClassifier.set("fabric")
 }
 
 sourcesJar {
     def commonSources = project(":common").sourcesJar
     dependsOn commonSources
     from commonSources.archiveFile.map { zipTree(it) }
-    classifier "fabric-sources"
+    archiveClassifier.set("fabric-sources")
 }
 
 
-task signJar(dependsOn: remapJar, group: 'build') {
+tasks.register('signJar') {
     dependsOn remapJar
     onlyIf {
         project.hasProperty('keyStore')

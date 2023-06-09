@@ -2,8 +2,8 @@ package se.gory_moon.you_died.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.Util;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
@@ -31,7 +31,7 @@ public class DeathSplashScreen extends DeathScreenWrapper {
     }
 
     @Override
-    public void render(PoseStack stack, int pMouseX, int pMouseY, float pPartialTick) {
+    public void render(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         long now = Util.getMillis();
 
         if (fadeInStart == 0L) {
@@ -80,9 +80,9 @@ public class DeathSplashScreen extends DeathScreenWrapper {
 
         if (!showingMenu) {
             float centerY = this.height / 2f;
-            this.fillGradient(stack, 0, (int) centerY - 45, this.width, (int) centerY - 25, 0x00000000, 0xea000000);
-            fill(stack, 0, (int) centerY - 25, this.width, (int) centerY + 25, 0xea000000);
-            this.fillGradient(stack, 0, (int) centerY + 25, this.width, (int) centerY + 45, 0xea000000, 0x00000000);
+            guiGraphics.fillGradient( 0, (int) centerY - 45, this.width, (int) centerY - 25, 0x00000000, 0xea000000);
+            guiGraphics.fill(0, (int) centerY - 25, this.width, (int) centerY + 25, 0xea000000);
+            guiGraphics.fillGradient( 0, (int) centerY + 25, this.width, (int) centerY + 45, 0xea000000, 0x00000000);
 
             float w = font.getSplitter().stringWidth(deathTitle.getVisualOrderText()) - 1;
             float x = (this.width / 2f) - (w / 2f);
@@ -91,19 +91,19 @@ public class DeathSplashScreen extends DeathScreenWrapper {
             float scaleZoom = Mth.lerp(zoomIn, 0F, 0.4F);
             float scale = 2.6F + scaleZoom;
 
-            stack.pushPose();
-            stack.translate(x + (w / 2f), y, 0);
-            stack.scale(scale, scale, scale);
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(x + (w / 2f), y, 0);
+            guiGraphics.pose().scale(scale, scale, scale);
 
             int l = Mth.ceil(fadeInText * 255.0F) << 24;
             if ((l & 0xfc000000) != 0) {
-                font.draw(stack, deathTitle, -(w/2f), -font.lineHeight, 0x008a0001 | l);
+                guiGraphics.drawString(font, deathTitle, (int) -(w/2f), -font.lineHeight, 0x008a0001 | l, false);
             }
-            stack.popPose();
+            guiGraphics.pose().popPose();
         } else {
             int l = Mth.ceil(fadeIn * 255.0F) << 24;
             if ((l & 0xfc000000) != 0) {
-                deathScreen.render(stack, pMouseX, pMouseY, pPartialTick);
+                deathScreen.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
             }
         }
     }

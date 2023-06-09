@@ -1,5 +1,5 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
 architectury {
@@ -50,13 +50,13 @@ shadowJar {
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
-    classifier "forge-dev-shadow"
+    archiveClassifier.set("forge-dev-shadow")
 }
 
 remapJar {
     inputFile.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier "forge"
+    archiveClassifier.set("forge")
 }
 
 sourcesJar {
@@ -65,7 +65,7 @@ sourcesJar {
     from commonSources.archiveFile.map { zipTree(it) }
 }
 
-task signJar(dependsOn: remapJar, group: 'build') {
+tasks.register('signJar') {
     dependsOn remapJar
     onlyIf {
         project.hasProperty('keyStore')

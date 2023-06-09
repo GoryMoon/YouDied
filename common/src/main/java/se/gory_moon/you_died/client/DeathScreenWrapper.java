@@ -1,6 +1,6 @@
 package se.gory_moon.you_died.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -35,31 +35,34 @@ public class DeathScreenWrapper extends DeathScreen {
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public void render(PoseStack stack, int pMouseX, int pMouseY, float pPartialTick) {
+    public void render(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         int alphaColor = Mth.ceil(this.alpha * 255.0F) << 24;
 
-        this.fillGradient(stack, 0, 0, this.width, this.height, 1615855616, -1602211792);
-        stack.pushPose();
-        stack.scale(2.0F, 2.0F, 2.0F);
-        drawCenteredString(stack, this.font, deathScreen.getTitle(), this.width / 2 / 2, 30, 16777215 | alphaColor);
-        stack.popPose();
+        guiGraphics.fillGradient(0, 0, this.width, this.height, 0x60500000, 0xa0803030);
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().scale(2.0F, 2.0F, 2.0F);
+        guiGraphics.drawCenteredString(this.font, deathScreen.getTitle(), this.width / 2 / 2, 30, 0xffffff | alphaColor);
+        guiGraphics.pose().popPose();
         if (deathScreen.causeOfDeath != null) {
-            drawCenteredString(stack, this.font, deathScreen.causeOfDeath, this.width / 2, 85, 16777215 | alphaColor);
+            guiGraphics.drawCenteredString(this.font, deathScreen.causeOfDeath, this.width / 2, 85, 0xffffff | alphaColor);
         }
 
-        drawCenteredString(stack, this.font, deathScreen.deathScore, this.width / 2, 100, 16777215 | alphaColor);
+        guiGraphics.drawCenteredString(this.font, deathScreen.deathScore, this.width / 2, 100, 0xffffff | alphaColor);
         if (deathScreen.causeOfDeath != null && pMouseY > 85 && pMouseY < 85 + 9) {
             Style style = getClickedComponentStyleAt(pMouseX);
-            this.renderComponentHoverEffect(stack, style, pMouseX, pMouseY);
+            guiGraphics.renderComponentHoverEffect(this.font, style, pMouseX, pMouseY);
         }
 
+        // Sets the alpha on all widgets
         for (GuiEventListener guieventlistener : deathScreen.children()) {
             if (guieventlistener instanceof AbstractWidget) {
                 ((AbstractWidget) guieventlistener).setAlpha(alpha);
             }
         }
+
+        // Renders all renderables without calling super
         for(Renderable renderable : deathScreen.renderables) {
-            renderable.render(stack, pMouseX, pMouseY, pPartialTick);
+            renderable.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
         }
     }
 
