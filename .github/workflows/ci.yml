@@ -17,4 +17,4 @@ jobs:
           java-version: '21'
           cache: 'gradle'
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew clean build --refresh-dependencies
