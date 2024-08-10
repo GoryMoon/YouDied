@@ -1,46 +1,53 @@
 plugins {
+    id "dev.architectury.loom" version "1.7-SNAPSHOT" apply false
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "1.1-SNAPSHOT" apply false
+    id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
 }
 
 architectury {
     minecraft = rootProject.minecraft_version
 }
+allprojects {
+    version = rootProject.mod_version
+    group = rootProject.maven_group
+
+    //adds the build number to the end of the version string if on a build server
+    if (System.getenv().GITHUB_RUN_NUMBER != null) {
+        version += ".${System.getenv().GITHUB_RUN_NUMBER}"
+    }
+}
 
 subprojects {
     apply plugin: "dev.architectury.loom"
+    apply plugin: "architectury-plugin"
+
+    base {
+        archivesName = "$rootProject.archives_name-$project.name-$minecraft_version"
+    }
+
+    repositories {
+    }
 
     loom {
         silentMojangMappingsLicense()
     }
 
     dependencies {
-        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
-        // The following line declares the mojmap mappings, you may use other mappings as well
+        minecraft "com.mojang:minecraft:$rootProject.minecraft_version"
         mappings loom.officialMojangMappings()
-    }
-}
-
-allprojects {
-    apply plugin: "java"
-    apply plugin: "architectury-plugin"
-
-    archivesBaseName = rootProject.archives_base_name + "-" + minecraft_version
-    version = rootProject.mod_version
-    group = rootProject.maven_group
-
-    //adds the build number to the end of the version string if on a build server
-    if (System.getenv().GITHUB_RUN_NUMBER  != null) {
-        version += ".${System.getenv().GITHUB_RUN_NUMBER}"
-    }
-    println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
-
-    tasks.withType(JavaCompile).configureEach {
-        options.encoding = "UTF-8"
-        options.release = 17
     }
 
     java {
         withSourcesJar()
+
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+
+    tasks.withType(JavaCompile).configureEach {
+        it.options.encoding = "UTF-8"
+        it.options.release = 21
     }
 }

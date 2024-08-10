@@ -7,6 +7,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.DeathScreen;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
@@ -100,10 +101,10 @@ public class DeathScreenWrapper extends DeathScreen {
     }
 
     @Override
-    public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta) {
+    public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY) {
         if (condition.getAsBoolean())
-            return deathScreen.mouseScrolled(pMouseX, pMouseY, pDelta);
-        return super.mouseScrolled(pMouseX, pMouseY, pDelta);
+            return deathScreen.mouseScrolled(pMouseX, pMouseY, pScrollX, pScrollY);
+        return super.mouseScrolled(pMouseX, pMouseY, pScrollX, pScrollY);
     }
 
     @Override
@@ -145,7 +146,7 @@ public class DeathScreenWrapper extends DeathScreen {
     }
 
     @Override
-    public Optional<GuiEventListener> getChildAt(double pMouseX, double pMouseY) {
+    public @NotNull Optional<GuiEventListener> getChildAt(double pMouseX, double pMouseY) {
         if (condition.getAsBoolean())
             return deathScreen.getChildAt(pMouseX, pMouseY);
         return super.getChildAt(pMouseX, pMouseY);
