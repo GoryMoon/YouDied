@@ -1,0 +1,31 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+issueTrackerURL = "https://github.com/GoryMoon/YouDied/issues"
+
+[[mods]]
+modId = "you_died"
+version = "${version}"
+displayName = "You Died"
+displayURL = "https://www.curseforge.com/minecraft/mc-mods/you-died"
+logoFile = "logo.png"
+itemIcon = "minecraft:netherite_sword"
+credits = "Darkosto for feature request."
+authors = "Gory_Moon"
+description = '''
+A mod that adds a Dark Souls inspired death screen
+'''
+
+[[dependencies.you_died]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.you_died]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21,)"
+ordering = "NONE"
+side = "BOTH"

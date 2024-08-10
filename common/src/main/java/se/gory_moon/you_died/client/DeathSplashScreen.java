@@ -13,7 +13,7 @@ import net.minecraft.util.Mth;
 import se.gory_moon.you_died.YouDied;
 
 public class DeathSplashScreen extends DeathScreenWrapper {
-    private static final ResourceLocation TIMES_FONT = new ResourceLocation(YouDied.MOD_ID, "times");
+    private static final ResourceLocation TIMES_FONT = ResourceLocation.fromNamespaceAndPath(YouDied.MOD_ID, "times");
     private static final Style ROOT_STYLE = Style.EMPTY.withFont(TIMES_FONT);
     private final Component deathTitle;
     private final DeathScreenWrapper deathScreen;
@@ -97,7 +97,7 @@ public class DeathSplashScreen extends DeathScreenWrapper {
 
             int l = Mth.ceil(fadeInText * 255.0F) << 24;
             if ((l & 0xfc000000) != 0) {
-                guiGraphics.drawString(font, deathTitle, (int) -(w/2f), -font.lineHeight, 0x008a0001 | l, false);
+                guiGraphics.drawString(font, deathTitle, (int) -(w/2f), -(font.lineHeight / 4), 0x008a0001 | l, false);
             }
             guiGraphics.pose().popPose();
         } else {
