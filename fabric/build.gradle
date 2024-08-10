@@ -58,7 +58,6 @@ remapJar {
     inputFile.set shadowJar.archiveFile
 }
 
-
 tasks.register('signJar') {
     dependsOn remapJar
     onlyIf {
@@ -67,8 +66,9 @@ tasks.register('signJar') {
 
     doLast {
         if (project.hasProperty('keyStore')) {
-            new File("$buildDir/libs").mkdirs()
-            project.logger.info("Signing jar ${remapJar.archiveFileName.get()}");
+            def outputDir = layout.buildDirectory.get()
+            new File("$outputDir/libs").mkdirs()
+            logger.info("Signing jar ${remapJar.archiveFileName.get()}")
 
             def keyStore = project.findProperty('keyStore')
             def alias = project.findProperty('keyStoreAlias')
@@ -76,8 +76,9 @@ tasks.register('signJar') {
             def keyPass = project.findProperty('keyStorePass')
             def inputFile = remapJar.archiveFile.get()
 
-            def output = new File("$buildDir/jars")
+            def output = new File("$outputDir/jars")
             output.mkdirs()
+
             ant.signjar(
                     destDir: "${output.absolutePath}",
                     jar: inputFile,
@@ -89,7 +90,7 @@ tasks.register('signJar') {
                     verbose: true,
                     preservelastmodified: "true")
         } else {
-            project.logger.log(LogLevel.WARN, "Could not sign ${remapJar.archiveFileName.get()}. No keyStore property could be found")
+            logger.log(LogLevel.WARN, "Could not sign ${remapJar.archiveFileName.get()}. No keyStore property could be found")
         }
     }
 }

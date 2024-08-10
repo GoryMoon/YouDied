@@ -26,13 +26,13 @@ jobs:
           ORG_GRADLE_PROJECT_keyStore: ./release.keystore
           ORG_GRADLE_PROJECT_keyStoreAlias: ${{ secrets.KEYSTORE_ALIAS }}
           ORG_GRADLE_PROJECT_keyStorePass: ${{ secrets.KEYSTORE_PASS }}
-        run: ./gradlew clean build --refresh-dependencies
+        run: ./gradlew build
       - uses: actions/upload-artifact@v4
         with:
           name: artifacts
           path: |
-            neoforge/build/libs/
-            fabric/build/libs/
+            neoforge/build/jars/
+            fabric/build/jars/
   release:
     needs: [build]
     runs-on: ubuntu-latest
